@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: loseminho-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: loseminho
+      MYSQL_USER: loseminho
+      MYSQL_PASSWORD: loseminho1234
+      TZ: Asia/Seoul
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - loseminho-network
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: loseminho-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: loseminho
+      DB_USERNAME: loseminho
+      DB_PASSWORD: loseminho1234
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - loseminho-network
+    restart: unless-stopped
+
+  # Nginx (Optional - 로컬 테스트용)
+  nginx:
+    image: nginx:alpine
+    container_name: loseminho-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - loseminho-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  loseminho-network:
+    driver: bridge

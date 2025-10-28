@@ -1,0 +1,10 @@
+.gradle
+build
+.idea
+*.iml
+*.ipr
+*.iws
+.DS_Store
+*.log
+db_dev.mv.db
+db_dev.trace.db
