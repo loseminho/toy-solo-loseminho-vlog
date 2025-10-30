@@ -20,7 +20,10 @@ backend/*.log.*
 backend/db_dev.mv.db
 backend/db_dev.trace.db
 
-# Gradle wrapper 포함
+# Gradle wrapper는 Git에 포함
+!backend/gradle/
+!backend/gradlew
+!backend/gradlew.bat
 !backend/gradle/wrapper/gradle-wrapper.jar
 
 # ===================================
@@ -48,18 +51,19 @@ infra/terraform/*.tfstate.backup
 infra/terraform/.terraform.lock.hcl
 
 # ===================================
-# Root level (이동 전 파일들)
+# Root level (이동 전 파일들만 무시)
 # ===================================
-.gradle/
-build/
-src/
-gradlew
-gradlew.bat
-gradle/
-settings.gradle.kts
-build.gradle.kts
-db_dev.mv.db
-db_dev.trace.db
+# 루트의 이전 Spring Boot 파일들만 무시
+/.gradle/
+/build/
+/src/
+/gradlew
+/gradlew.bat
+/gradle/
+/settings.gradle.kts
+/build.gradle.kts
+/db_dev.mv.db
+/db_dev.trace.db
 
 # ===================================
 # OS
