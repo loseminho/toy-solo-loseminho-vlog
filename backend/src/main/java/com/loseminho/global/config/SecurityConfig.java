@@ -27,10 +27,17 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // 공개 API
+                        .requestMatchers("/", "/api/v1/health", "/api/v1/ping").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll() // 인증 관련
                         .requestMatchers("/api/v1/public/**").permitAll() // 공개 API
+                        
+                        // 개발 도구
                         .requestMatchers("/h2-console/**").permitAll() // H2 콘솔
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger
+                        .requestMatchers("/actuator/**").permitAll() // Spring Actuator
+                        
+                        // 나머지는 인증 필요
                         .anyRequest().authenticated()
                 );
 
